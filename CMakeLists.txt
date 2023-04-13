@@ -1,7 +1,10 @@
-cmake_minimum_required(VERSION 3.25)
+cmake_minimum_required(VERSION 3.2)
 project(leetcode_cpp)
 enable_testing()
 
 add_subdirectory(02xx)
 add_subdirectory(10xx)
+add_subdirectory(11xx)
+add_subdirectory(19xx)
+add_subdirectory(24xx)
 add_subdirectory(others)
