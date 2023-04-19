@@ -1,30 +1,24 @@
 #include "0233.h"
+#include "../tests.h"
 #include <iostream>
 
 int main() {
-    std::vector<std::tuple<int, int>> cases{
-            {1, 1},
-            {10, 2},
-            {100, 21},
-            {1000, 301},
-            {10000, 4001},
-            {2, 1},
-            {20, 12},
-            {200, 140},
-            {2000, 1600},
-            {20000, 18000},
-            {3, 1},
-            {30, 13},
-            {9, 1},
-            {90, 19},
+    std::vector<case_t<int, int>> cases{
+            {"case 1", 1, 1},
+            {"case 2", 10, 2},
+            {"case 3", 100, 21},
+            {"case 4", 1000, 301},
+            {"case 5", 10000, 4001},
+            {"case 6", 2, 1},
+            {"case 7", 20, 12},
+            {"case 8", 200, 140},
+            {"case 9", 2000, 1600},
+            {"case 10", 20000, 18000},
+            {"case 11", 3, 1},
+            {"case 12", 30, 13},
+            {"case 13", 9, 1},
+            {"case 14", 90, 19},
     };
 
-    for (auto [arg, want] : cases) {
-        if (auto got = Solution::countDigitOne(arg); got != want) {
-            std::cerr << "test failed! want: " << want << ", got: " << got << std::endl;
-            return -1;
-        }
-    }
-
-    return 0;
+    return run_tests(cases, Solution::countDigitOne);
 }

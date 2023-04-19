@@ -1,20 +1,12 @@
-
 #include "1041.h"
-#include <iostream>
+#include "../tests.h"
 
 int main() {
-    std::vector<std::tuple<std::string, bool> > cases{
-            {"GGLLGG", true},
-            {"GG", false},
-            {"GL", true},
+    std::vector<case_t<bool, std::string>> cases{
+            {"case 1", "GGLLGG", true},
+            {"case 2", "GG", false},
+            {"case 3", "GL", true},
     };
 
-    for (auto &[arg, result] : cases) {
-        if (auto got = Solution::isRobotBounded(arg); got != result) {
-            std::cerr << "failed! want: " << result << " got: " << got << std::endl;
-            return -1;
-        }
-    }
-
-    return 0;
+    return run_tests(cases, Solution::isRobotBounded);
 }
