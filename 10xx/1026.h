@@ -1,5 +1,6 @@
 
 #pragma once
+#include <algorithm>
 #include "../tree_node.h"
 
 class Solution {

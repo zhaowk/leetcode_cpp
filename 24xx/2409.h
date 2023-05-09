@@ -1,4 +1,5 @@
 #pragma once
+#include <cstdio>
 #include <string_view>
 using std::string_view;
 

@@ -7,6 +7,7 @@
 //
 //返回以这种方式取得的乘积差中的 最大值 。
 #include <vector>
+#include <algorithm>
 using std::vector;
 class Solution {
 public:

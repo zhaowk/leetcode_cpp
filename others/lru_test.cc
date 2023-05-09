@@ -1,43 +1,35 @@
-#include <iostream>
+#include <vector>
+#include <any>
 #include "lru.h"
+#include "../tests.h"
 
-struct cases_t {
-    int capacity{};
-    // tuple: <put?, arg1, arg2|want>
-    std::vector<std::tuple<bool, int, int>> args{};
-};
+typedef std::tuple<int,int> put_arg;
 
 int main() {
-    std::vector<cases_t> cases = {
-            {
-                2,
-                {
-                        {true, 1, 1},
-                        {true, 2, 2},
-                        {false, 1, 1},
-                        {true, 3, 3},
-                        {false, 2, -1},
-                        {true, 4, 4},
-                        {false, 1, -1},
-                        {false, 3, 3},
-                        {false, 4, 4},
-                }
-            }
+    auto _get = [](LruCache<int, int>* cache, std::any&& arg) {
+        return cache->get(std::any_cast<int>(arg)).value_or(-1);
     };
 
-    for (auto &[cap, args] : cases) {
-        LruCache<int, int> cache(cap);
-        for (auto &[put, arg1, arg2] : args) {
-            if (put) {
-                cache.put(arg1, arg2);
-            } else {
-                if (auto got = cache.get(arg1).value_or(-1); got != arg2) {
-                    std::cerr << "test failed! want: " << arg2 << " got: " << got << std::endl;
-                    return -1;
-                }
-            }
-        }
-    }
+    auto _put = [](LruCache<int, int>* cache, std::any&& args) {
+        return std::apply([cache](int k, int v) {cache->put(k, v); return 0;}, std::any_cast<put_arg>(args));
+    };
 
-    return 0;
+    std::vector<case_s<LruCache<int,int>, int, std::any>> cases = {
+            {
+                    .name = "lru capacity: 2",
+                    .obj = new LruCache<int, int>(2),
+                    .cases = {
+                            {"put 1, 1", _put, 0, put_arg{1,1}},
+                            {"put 2, 2", _put, 0, put_arg{2,2}},
+                            {"get 1: 1", _get, 1, 1},
+                            {"put 3, 3", _put, 0, put_arg{3,3}},
+                            {"get 2:-1", _get, -1, 2},
+                            {"put 4, 4", _put, 0, put_arg{4,4}},
+                            {"get 1:-1", _get, -1, 1},
+                            {"get 3: 3", _get, 3, 3},
+                            {"get 4: 4", _get, 4, 4},
+                    },
+            }
+    };
+    return run_tests_c(cases);
 }
