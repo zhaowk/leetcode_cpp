@@ -133,21 +133,5 @@ int main() {
 
     std::cout << r << std::endl;
 
-    std::vector<int, std::allocator<int>> ab;
-    ab.emplace_back(1);
-    ab.push_back(2);
-
-    struct abcd{
-        int a;
-        explicit abcd(int _a) : a(_a) {}
-    };
-
-    auto ins = malloc(sizeof(abcd));
-
-    auto p = new(ins)abcd(2);
-
-    std::cout << ins << std::endl << p << std::endl;
-    std::cout << ((abcd*)ins)->a << std::endl << p->a << std::endl;
-
     return 0;
 }

@@ -65,3 +65,49 @@ static inline int run_tests_internal(std::string_view file, int line, std::vecto
 
 // macro for run_tests
 #define run_tests(cases, func) run_tests_internal(__FILE__, __LINE__, cases, func)
+
+template<class Obj, class R, class Tup>
+struct case_f {
+    std::string_view name;
+    std::function<R(Obj*, Tup)> func;
+    R want;
+    Tup args;
+};
+
+template<class Obj, class R, class Tup>
+struct case_s {
+    std::string_view name;
+    Obj* obj;
+    std::vector<case_f<Obj, R, Tup>> cases;
+};
+
+template<class Obj, class R, class Tup>
+static inline int run_tests_internal_c(std::string_view file, int line, std::vector<case_s<Obj, R, Tup>>& cases) {
+    std::future<int> futures[cases.size()];
+    for (int i = 0; i < cases.size(); ++i) {
+        // multi threads testing
+        futures[i] = std::async(std::launch::async, [&file, line](auto c) {
+            int r = TEST_SUCCESS;
+            for (auto &[name, func, want, args] : c.cases) {
+                if (auto got = func(c.obj, args); got != want) {
+                    test_failed_output(file, line, std::string(c.name) + " -> " + std::string(name), want, got);
+                    r = TEST_FAILED;
+                } else {
+                    // std::cout << got << std::endl;
+                }
+            }
+            return r;
+        }, cases[i]);
+    }
+
+    int result = TEST_SUCCESS;
+    for (auto& fu : futures) {
+        if (fu.get() == TEST_FAILED) {
+            result = TEST_FAILED;
+        }
+    }
+
+    return result;
+}
+
+#define run_tests_c(cases) run_tests_internal_c(__FILE__, __LINE__, cases)
